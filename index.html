@@ -1,1 +1,141 @@
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GAA Training Attendance</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6f4;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      width: 90px;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 70%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: none;
+      background: green;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .player {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+
+```
+<div class="header">
+  <img src="logo.png" class="logo"/>
+  <div>
+    <h1>Clara U12 Attendance</h1>
+    <p>Add players and store them in Firebase</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Add Player</h2>
+  <input id="name" placeholder="Player name"/>
+  <button onclick="addPlayer()">Add</button>
+
+  <div id="players"></div>
+</div>
+```
+
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD7Hqjn4GvjjD8ama1shVtIsR1LhW1P5MQ",
+  authDomain: "clara-u12-d2571.firebaseapp.com",
+  projectId: "clara-u12-d2571",
+  storageBucket: "clara-u12-d2571.appspot.com",
+  messagingSenderId: "422717082023",
+  appId: "1:422717082023:web:e637c0b8e7816cf00a8e82"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.addPlayer = async function () {
+  const name = document.getElementById("name").value;
+
+  if (!name) return;
+
+  await addDoc(collection(db, "players"), {
+    name: name
+  });
+
+  document.getElementById("name").value = "";
+};
+
+const playersDiv = document.getElementById("players");
+
+onSnapshot(collection(db, "players"), (snapshot) => {
+  playersDiv.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const player = doc.data();
+
+    playersDiv.innerHTML += `
+      <div class="player">
+        <span>${player.name}</span>
+      </div>
+    `;
+  });
+});
+</script>
+
+</body>
+</html>
